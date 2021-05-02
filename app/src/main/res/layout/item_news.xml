@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/news_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:maxLines="2"
+            android:text="NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE "
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/news_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/news_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1"
+            android:text="NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE "
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/news_image"
+            app:layout_constraintTop_toBottomOf="@+id/news_title" />
+
+        <ImageView
+            android:id="@+id/news_image"
+            android:layout_width="120dp"
+            android:layout_height="63dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/news_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:maxLines="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/news_fav_button"
+            android:text="NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE NEEWS TITLE "
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintTop_toBottomOf="@+id/news_image" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/news_fav_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fav"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/news_date"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

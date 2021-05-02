@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/carousel_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/abc_vector_test"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/carousel_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:inputType="textMultiLine|textNoSuggestions"
+        app:layout_constraintBottom_toBottomOf="@+id/carousel_image"
+        android:background="@color/black_transparent"
+        android:paddingVertical="4dp"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textAlignment="center"
+        android:text="News Title News Title News Title News Title News Title News Title News Title News Title v "
+        android:gravity="center_horizontal" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
