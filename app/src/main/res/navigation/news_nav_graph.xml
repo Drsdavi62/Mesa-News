@@ -9,5 +9,16 @@
         android:id="@+id/newsFragment"
         android:name="com.davi.mesanews.news.NewsFragment"
         android:label="news_fragment"
-        tools:layout="@layout/news_fragment" />
+        tools:layout="@layout/news_fragment" >
+        <action
+            android:id="@+id/logout"
+            app:destination="@id/homeActivity"
+            app:popUpTo="@id/newsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <activity
+        android:id="@+id/homeActivity"
+        android:name="com.davi.mesanews.home.HomeActivity"
+        android:label="activity_home"
+        tools:layout="@layout/activity_home" />
 </navigation>

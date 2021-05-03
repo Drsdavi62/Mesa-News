@@ -2,6 +2,8 @@ package com.davi.mesanews.home
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.davi.mesanews.R
+import com.davi.mesanews.utils.LoginInputEditText
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -34,19 +37,32 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val passwordLayout = view.findViewById<TextInputLayout>(R.id.login_password)
-        val emailEditText = view.findViewById<TextInputEditText>(R.id.login_email_field)
-        val passwordEditText = view.findViewById<TextInputEditText>(R.id.login_password_field)
-        val loginButton = view.findViewById<MaterialButton>(R.id.login_button)
+        val emailLayout: TextInputLayout = view.findViewById(R.id.login_email)
+        val emailEditText: LoginInputEditText = view.findViewById(R.id.login_email_field)
+
+        val passwordLayout: TextInputLayout = view.findViewById(R.id.login_password)
+        val passwordEditText: LoginInputEditText = view.findViewById(R.id.login_password_field)
+
+        val loginButton: MaterialButton = view.findViewById(R.id.login_button)
+
         val loadingView : ConstraintLayout = view.findViewById(R.id.login_loading_view)
 
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
+            var shouldPerform = true
 
-            if (email.isEmpty() || password.isEmpty()) {
-                passwordLayout.error = "Please fill all fields"
-            } else {
+            if (email.isEmpty()) {
+                emailLayout.error = "Cannot be empty"
+                shouldPerform = false
+            }
+
+            if (password.isEmpty()) {
+                passwordLayout.error = "Cannot be empty"
+                shouldPerform = false
+            }
+
+            if (shouldPerform) {
                 viewModel.performLogin(emailEditText.text.toString(), passwordEditText.text.toString())
                 loadingView.visibility = View.VISIBLE
             }
@@ -56,8 +72,10 @@ class LoginFragment : Fragment() {
             if (it) {
                 Navigation.findNavController(view).navigate(R.id.newsActivity)
                 loadingView.visibility = View.GONE
+                requireActivity().finish()
             } else {
                 loadingView.visibility = View.GONE
+                emailLayout.error =  " "
                 passwordLayout.error = "Wrong email or password"
             }
         })

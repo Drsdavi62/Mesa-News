@@ -12,11 +12,13 @@
         tools:layout="@layout/login_fragment" >
         <action
             android:id="@+id/action_loginFragment_to_newsActivity"
-            app:destination="@id/newsActivity" />
+            app:destination="@id/newsActivity"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <activity
         android:id="@+id/newsActivity"
         android:name="com.davi.mesanews.news.NewsActivity"
         android:label="activity_main"
-        tools:layout="@layout/activity_main" />
+        tools:layout="@layout/activity_news" />
 </navigation>

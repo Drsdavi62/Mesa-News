@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/login_logo"
         android:hint="Email">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.davi.mesanews.utils.LoginInputEditText
             android:id="@+id/login_email_field"
             android:maxLines="1"
             android:inputType="text"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@id/login_email"
         android:hint="Password">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.davi.mesanews.utils.LoginInputEditText
             android:id="@+id/login_password_field"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"

@@ -3,6 +3,7 @@ package com.davi.mesanews.news
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.navigation.Navigation
 import androidx.preference.PreferenceManager
 import com.davi.mesanews.R
 import com.davi.mesanews.utils.MesaNewsConstants
@@ -10,7 +11,7 @@ import com.davi.mesanews.utils.MesaNewsConstants
 class NewsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_news)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -23,6 +24,7 @@ class NewsActivity : AppCompatActivity() {
                 val editor = prefs.edit()
                 editor.remove(MesaNewsConstants.TOKEN_KEY)
                 editor.apply()
+                Navigation.findNavController(findViewById(R.id.news_fragment)).navigate(R.id.logout)
                 finish()
             }
         }
