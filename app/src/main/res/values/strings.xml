@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mesa NEWS</string>
+    <string name="news_spinner_prompt">Filter By</string>
 </resources>

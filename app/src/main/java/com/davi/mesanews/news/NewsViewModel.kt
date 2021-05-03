@@ -25,7 +25,7 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
         favoritesList = favoritesRepository.getFavoritesList()
     }
 
-    val apiHandler = APIHandler.getInstance(application)
+    val apiHandler = APIHandler.getInstance(application.applicationContext)
 
     fun getNews() {
         apiHandler.getNews(object : Callback<NewsResponseModel> {

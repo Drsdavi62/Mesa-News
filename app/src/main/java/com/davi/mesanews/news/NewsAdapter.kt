@@ -3,6 +3,7 @@ package com.davi.mesanews.news
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.ListAdapter
@@ -35,7 +36,7 @@ class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>,val onFavorite
         private var description = itemView.findViewById<MaterialTextView>(R.id.news_description)
         private var date = itemView.findViewById<MaterialTextView>(R.id.news_date)
         private var image = itemView.findViewById<ImageView>(R.id.news_image)
-        private var favoriteButton = itemView.findViewById<MaterialButton>(R.id.news_fav_button)
+        private var favoriteButton = itemView.findViewById<ImageButton>(R.id.news_fav_button)
 
         fun bindView(news : NewsModel) {
             title.text = news.title
@@ -60,7 +61,7 @@ class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>,val onFavorite
         }
 
         private fun setButtonText(isFavorite: Boolean) {
-            favoriteButton.text = if (isFavorite) "Ja" else "Fav"
+            favoriteButton.setImageResource(if (isFavorite) R.drawable.ic_favorite_24 else R.drawable.ic_favorite_border_24)
         }
     }
 }

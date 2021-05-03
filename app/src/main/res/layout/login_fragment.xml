@@ -28,6 +28,9 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_email_field"
+            android:maxLines="1"
+            android:inputType="text"
+            android:imeOptions="actionNext"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -49,6 +52,7 @@
             android:id="@+id/login_password_field"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
+            android:maxLines="1"
             android:inputType="textPassword"
             android:layout_height="wrap_content" />
 

@@ -13,7 +13,7 @@ import retrofit2.Response
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
     var isSuccesfull = MutableLiveData<Boolean>()
-    val apiHandler = APIHandler.getInstance(application)
+    val apiHandler = APIHandler.getInstance(application.applicationContext)
 
     val prefs = PreferenceManager.getDefaultSharedPreferences(application)
     val editor = prefs.edit()

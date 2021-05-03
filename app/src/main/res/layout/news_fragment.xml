@@ -30,28 +30,33 @@
             app:size="10"
             app:spacing="10"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/news_see_fav"
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/news_filter_spinner"
+            android:prompt="@string/news_spinner_prompt"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/news_carousel"
+            android:layout_marginStart="8dp"
+            android:layout_marginVertical="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="See Fav"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/news_see_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/news_carousel"
-            app:layout_constraintStart_toEndOf="@id/news_see_fav"
-            android:text="See All"/>
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:indeterminate="true"
+            app:layout_constraintTop_toBottomOf="@+id/news_filter_spinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/news_recycler"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/news_see_fav"
+            app:layout_constraintTop_toBottomOf="@+id/news_filter_spinner"
             tools:listitem="@layout/item_news">
 
         </androidx.recyclerview.widget.RecyclerView>
