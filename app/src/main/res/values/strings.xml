@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Mesa NEWS</string>
     <string name="news_spinner_prompt">Filter By</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="login_empty_field_message">Cannot be empty</string>
+    <string name="login_wrong_credentials_message">Wrong email or password</string>
+    <string name="news_search_hint">Search for title</string>
 </resources>

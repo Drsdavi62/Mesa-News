@@ -2,7 +2,9 @@ package com.davi.mesanews.news
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.Navigation
 import androidx.preference.PreferenceManager
 import com.davi.mesanews.R
@@ -15,6 +17,7 @@ class NewsActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_logout_24);
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

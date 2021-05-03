@@ -37,10 +37,8 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val emailLayout: TextInputLayout = view.findViewById(R.id.login_email)
         val emailEditText: LoginInputEditText = view.findViewById(R.id.login_email_field)
 
-        val passwordLayout: TextInputLayout = view.findViewById(R.id.login_password)
         val passwordEditText: LoginInputEditText = view.findViewById(R.id.login_password_field)
 
         val loginButton: MaterialButton = view.findViewById(R.id.login_button)
@@ -53,12 +51,12 @@ class LoginFragment : Fragment() {
             var shouldPerform = true
 
             if (email.isEmpty()) {
-                emailLayout.error = "Cannot be empty"
+                emailEditText.setError(getString(R.string.login_empty_field_message))
                 shouldPerform = false
             }
 
             if (password.isEmpty()) {
-                passwordLayout.error = "Cannot be empty"
+                passwordEditText.setError(getString(R.string.login_empty_field_message))
                 shouldPerform = false
             }
 
@@ -75,8 +73,8 @@ class LoginFragment : Fragment() {
                 requireActivity().finish()
             } else {
                 loadingView.visibility = View.GONE
-                emailLayout.error =  " "
-                passwordLayout.error = "Wrong email or password"
+                emailEditText.setError(" ")
+                passwordEditText.setError(getString(R.string.login_wrong_credentials_message))
             }
         })
     }

@@ -19,11 +19,7 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
     var favoritesRepository = FavoritesRepository(application)
     var newsList : MutableLiveData<List<NewsModel>> = MutableLiveData()
     var highlightsList : MutableLiveData<List<NewsModel>> = MutableLiveData()
-    val favoritesList: LiveData<List<NewsModel>>
-
-    init {
-        favoritesList = favoritesRepository.getFavoritesList()
-    }
+    val favoritesList: LiveData<List<NewsModel>> = favoritesRepository.getFavoritesList()
 
     val apiHandler = APIHandler.getInstance(application.applicationContext)
 

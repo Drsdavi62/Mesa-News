@@ -9,6 +9,8 @@ import com.google.android.material.textfield.TextInputLayout
 
 class LoginInputEditText : TextInputEditText {
 
+    var inputLayout: TextInputLayout? = this@LoginInputEditText.parent.parent as TextInputLayout?
+
     constructor(context: Context) : super(context) {
         start()
     }
@@ -32,14 +34,17 @@ class LoginInputEditText : TextInputEditText {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.toString().isNotEmpty()) {
-                    val inputLayout: TextInputLayout = this@LoginInputEditText.parent.parent as TextInputLayout
-                    inputLayout.error = null
-                    inputLayout.isErrorEnabled = false
+                    inputLayout?.error = null
+                    inputLayout?.isErrorEnabled = false
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {
             }
         })
+    }
+
+    fun setError(message: String) {
+        inputLayout?.error = message
     }
 }

@@ -14,7 +14,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.squareup.picasso.Picasso
 
-class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>,val onFavoriteClick: OnFavoriteClick) :
+class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>, private val onFavoriteClick: OnFavoriteClick) :
     ListAdapter<NewsModel, NewsAdapter.NewsViewHolder>(asyncDifferConfig) {
 
     interface OnFavoriteClick {
@@ -46,7 +46,6 @@ class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>,val onFavorite
             news.imageUrl.let { strImage ->
                 Picasso.get()
                     .load(strImage)
-                        //TODO: CHANGE PLACEHOLDER
                     .placeholder(R.drawable.ic_launcher_foreground)
                     .into(image)
             }

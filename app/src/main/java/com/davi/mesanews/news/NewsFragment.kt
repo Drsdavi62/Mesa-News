@@ -1,13 +1,12 @@
 package com.davi.mesanews.news
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davi.mesanews.R
 import com.davi.mesanews.models.NewsModel
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.jama.carouselview.CarouselView
 import com.jama.carouselview.enums.IndicatorAnimationType
@@ -31,6 +29,7 @@ class NewsFragment : Fragment() {
     private lateinit var carousel: CarouselView
     private var filter = ListFilter.Date
 
+    private lateinit var newsFullList: List<NewsModel>
     private lateinit var favoritesList: List<NewsModel>
 
     override fun onCreateView(
@@ -43,6 +42,38 @@ class NewsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+        val menuItem = menu!!.findItem(R.id.search_item)
+        val searchView = menuItem.actionView as SearchView
+        searchView.queryHint =  getString(R.string.news_search_hint)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(searchText: String?): Boolean {
+                if (searchText != null) {
+                    val activeList = if (filter == ListFilter.Date) newsFullList else favoritesList
+                    val carouselVisibility = if (filter == ListFilter.Date) View.VISIBLE else View.GONE
+
+                    if (searchText.isNotEmpty()) {
+                        carousel.visibility = View.GONE
+                        val tempList = activeList.filter { it.title.contains(searchText!!, true)}
+                        adapter.submitList(tempList)
+                    } else {
+                        carousel.visibility = carouselVisibility
+                        adapter.submitList(activeList)
+                    }
+                }
+                return true
+            }
+        })
+
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,15 +85,12 @@ class NewsFragment : Fragment() {
         recyclerView.hasFixedSize()
 
         val spinner: Spinner = view.findViewById(R.id.news_filter_spinner)
-        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             requireContext(),
             R.array.filters_array,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
             spinner.adapter = adapter
         }
 
@@ -87,7 +115,6 @@ class NewsFragment : Fragment() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
-
         }
 
         adapter = NewsAdapter(
@@ -105,6 +132,7 @@ class NewsFragment : Fragment() {
 
         viewModel.newsList.observe(viewLifecycleOwner, Observer {
             if (filter == ListFilter.Date) {
+                newsFullList = it
                 adapter.submitList(it)
                 recyclerView.visibility = View.VISIBLE
             }
@@ -125,7 +153,6 @@ class NewsFragment : Fragment() {
                 indicatorAnimationType = IndicatorAnimationType.THIN_WORM
                 carouselOffset = OffsetType.CENTER
                 setCarouselViewListener { view, position ->
-                    // Example here is setting up a full image carousel
                     val highlight = it[position]
 
                     val image = view.findViewById<ImageView>(R.id.carousel_image)
@@ -139,7 +166,6 @@ class NewsFragment : Fragment() {
                     val title = view.findViewById<MaterialTextView>(R.id.carousel_title)
                     title.text = highlight.title
                 }
-                // After you finish setting up, show the CarouselView
                 show()
             }
         })

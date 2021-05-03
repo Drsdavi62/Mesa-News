@@ -30,13 +30,23 @@
             app:size="10"
             app:spacing="10"/>
 
+        <ImageView
+            android:id="@+id/news_filter_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_filter_list_24"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/news_filter_spinner"
+            app:layout_constraintTop_toBottomOf="@+id/news_carousel"/>
+
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/news_filter_spinner"
             android:prompt="@string/news_spinner_prompt"
             android:layout_width="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginVertical="8dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/news_filter_icon"
             app:layout_constraintTop_toBottomOf="@+id/news_carousel"
             android:layout_height="wrap_content" />
 
