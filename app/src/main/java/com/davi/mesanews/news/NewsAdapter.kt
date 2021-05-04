@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.davi.mesanews.R
 import com.davi.mesanews.models.NewsModel
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.squareup.picasso.Picasso
+import java.util.*
 
-class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>, private val onFavoriteClick: OnFavoriteClick) :
+class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>,
+                  private val onFavoriteClick: OnFavoriteClick) :
     ListAdapter<NewsModel, NewsAdapter.NewsViewHolder>(asyncDifferConfig) {
 
     interface OnFavoriteClick {
@@ -27,11 +28,12 @@ class NewsAdapter(asyncDifferConfig: AsyncDifferConfig<NewsModel>, private val o
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        var news : NewsModel = getItem(position)
+        val news : NewsModel = getItem(position)
         holder.bindView(news)
     }
 
-    class NewsViewHolder(itemView: View, val onFavoriteClick: OnFavoriteClick) : RecyclerView.ViewHolder(itemView) {
+
+    class NewsViewHolder(itemView: View, private val onFavoriteClick: OnFavoriteClick) : RecyclerView.ViewHolder(itemView) {
         private var title = itemView.findViewById<MaterialTextView>(R.id.news_title)
         private var description = itemView.findViewById<MaterialTextView>(R.id.news_description)
         private var date = itemView.findViewById<MaterialTextView>(R.id.news_date)

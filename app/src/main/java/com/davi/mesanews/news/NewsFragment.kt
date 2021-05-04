@@ -2,10 +2,7 @@ package com.davi.mesanews.news
 
 import android.os.Bundle
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
+import android.widget.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,11 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davi.mesanews.R
 import com.davi.mesanews.models.NewsModel
+import com.davi.mesanews.utils.NewsErrorTypes
 import com.google.android.material.textview.MaterialTextView
 import com.jama.carouselview.CarouselView
 import com.jama.carouselview.enums.IndicatorAnimationType
 import com.jama.carouselview.enums.OffsetType
 import com.squareup.picasso.Picasso
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NewsFragment : Fragment() {
 
@@ -27,7 +27,10 @@ class NewsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NewsAdapter
     private lateinit var carousel: CarouselView
+    private lateinit var spinner: Spinner
+    private lateinit var emptyView: LinearLayout
     private var filter = ListFilter.Date
+    private var previousErrors = ArrayList<NewsErrorTypes>()
 
     private lateinit var newsFullList: List<NewsModel>
     private lateinit var favoritesList: List<NewsModel>
@@ -63,10 +66,10 @@ class NewsFragment : Fragment() {
                     if (searchText.isNotEmpty()) {
                         carousel.visibility = View.GONE
                         val tempList = activeList.filter { it.title.contains(searchText!!, true)}
-                        adapter.submitList(tempList)
+                        adapter.submitList(tempList as MutableList<NewsModel>)
                     } else {
                         carousel.visibility = carouselVisibility
-                        adapter.submitList(activeList)
+                        adapter.submitList(activeList as MutableList<NewsModel>)
                     }
                 }
                 return true
@@ -79,12 +82,13 @@ class NewsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         carousel = view.findViewById(R.id.news_carousel)
+        emptyView = view.findViewById(R.id.news_empty_view)
         recyclerView = view.findViewById(R.id.news_recycler)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.hasFixedSize()
 
-        val spinner: Spinner = view.findViewById(R.id.news_filter_spinner)
+        spinner = view.findViewById(R.id.news_filter_spinner)
         ArrayAdapter.createFromResource(
             requireContext(),
             R.array.filters_array,
@@ -102,14 +106,9 @@ class NewsFragment : Fragment() {
                 id: Long
             ) {
                 if (position == 0) {
-                    filter = ListFilter.Date
-                    viewModel.getNews()
-                    carousel.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
+                    showList(ListFilter.Date)
                 } else {
-                    filter = ListFilter.Favorite
-                    adapter.submitList(favoritesList)
-                    carousel.visibility = View.GONE
+                    showList(ListFilter.Favorite)
                 }
             }
 
@@ -132,9 +131,13 @@ class NewsFragment : Fragment() {
 
         viewModel.newsList.observe(viewLifecycleOwner, Observer {
             if (filter == ListFilter.Date) {
-                newsFullList = it
-                adapter.submitList(it)
-                recyclerView.visibility = View.VISIBLE
+                if (it.isEmpty()) {
+                    changeEmptyState(true)
+                } else {
+                    newsFullList = it
+                    adapter.submitList(it)
+                    changeEmptyState(false)
+                }
             }
         })
 
@@ -169,6 +172,58 @@ class NewsFragment : Fragment() {
                 show()
             }
         })
+
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
+            handleErrors(it)
+        })
+    }
+
+    private fun handleErrors(errors: List<NewsErrorTypes>) {
+        if (errors.contains(NewsErrorTypes.DateError)) {
+            showList(ListFilter.Favorite)
+        }
+
+        if (previousErrors.contains(NewsErrorTypes.DateError) && !errors.contains(NewsErrorTypes.DateError)) {
+            showList(ListFilter.Date)
+        }
+
+        if (errors.contains(NewsErrorTypes.HighlightsError)) {
+            carousel.visibility = View.GONE
+        } else {
+            carousel.visibility = View.VISIBLE
+        }
+
+        previousErrors = errors as ArrayList<NewsErrorTypes>
+    }
+
+    private fun showList(listFilter: ListFilter) {
+        recyclerView.visibility = View.VISIBLE
+        if (listFilter == ListFilter.Date) {
+            spinner.setSelection(0)
+            filter = ListFilter.Date
+            viewModel.getNews()
+            carousel.visibility = View.VISIBLE
+        } else {
+            spinner.setSelection(1)
+            filter = ListFilter.Favorite
+            carousel.visibility = View.GONE
+            if (favoritesList.isEmpty()) {
+                changeEmptyState(true)
+                return
+            }
+            changeEmptyState(false)
+            adapter.submitList(favoritesList)
+        }
+    }
+
+    private fun changeEmptyState(isEmpty: Boolean) {
+        if (isEmpty) {
+            emptyView.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+            return
+        }
+        emptyView.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
     }
 
     enum class ListFilter {

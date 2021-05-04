@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.davi.mesanews.models.NewsModel
 import com.davi.mesanews.models.NewsResponseModel
+import com.davi.mesanews.utils.NewsErrorTypes
 import com.davi.mesanews.utils.retrofit.APIHandler
 import com.davi.mesanews.utils.room.dao.FavoritesRepository
 import kotlinx.coroutines.CoroutineScope
@@ -20,18 +21,25 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
     var newsList : MutableLiveData<List<NewsModel>> = MutableLiveData()
     var highlightsList : MutableLiveData<List<NewsModel>> = MutableLiveData()
     val favoritesList: LiveData<List<NewsModel>> = favoritesRepository.getFavoritesList()
+    val errors:  MutableLiveData<MutableList<NewsErrorTypes>> = MutableLiveData(ArrayList())
 
-    val apiHandler = APIHandler.getInstance(application.applicationContext)
+    private val apiHandler = APIHandler.getInstance(application.applicationContext)
 
     fun getNews() {
         apiHandler.getNews(object : Callback<NewsResponseModel> {
             override fun onFailure(call: Call<NewsResponseModel>, t: Throwable) {
+                addError(NewsErrorTypes.DateError)
             }
 
             override fun onResponse(
                 call: Call<NewsResponseModel>,
                 response: Response<NewsResponseModel>
             ) {
+                if (response.body() == null || response.code() >= 400) {
+                    addError(NewsErrorTypes.DateError)
+                    return
+                }
+                removeError(NewsErrorTypes.DateError)
                 var news = response.body()!!.data
                 news = news.sortedBy { it.publishedAt }
                 news.map { newsModel ->
@@ -46,12 +54,18 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
     fun getHighlights() {
         apiHandler.getHighlights(object : Callback<NewsResponseModel> {
             override fun onFailure(call: Call<NewsResponseModel>, t: Throwable) {
+                addError(NewsErrorTypes.HighlightsError)
             }
 
             override fun onResponse(
                 call: Call<NewsResponseModel>,
                 response: Response<NewsResponseModel>
             ) {
+                if (response.body() == null || response.code() >= 400) {
+                    addError(NewsErrorTypes.HighlightsError)
+                    return
+                }
+                removeError(NewsErrorTypes.HighlightsError)
                 var news = response.body()!!.data
                 news = news.sortedBy { it.publishedAt }
                 highlightsList.postValue(news)
@@ -66,6 +80,22 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
             } else {
                 favoritesRepository.deleteFavorite(newsModel)
             }
+        }
+    }
+
+    private fun addError(errorType: NewsErrorTypes) {
+        val tempErrors = errors.value
+        if (errorType !in tempErrors!!) {
+            tempErrors.add(errorType)
+            errors.postValue(tempErrors)
+        }
+    }
+
+    private fun removeError(errorType: NewsErrorTypes) {
+        val tempErrors = errors.value
+        if (errorType in tempErrors!!) {
+            tempErrors.remove(errorType)
+            errors.postValue(tempErrors)
         }
     }
 }
