@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.davi.mesanews.models.NewsModel
 import com.davi.mesanews.models.NewsResponseModel
 import com.davi.mesanews.utils.NewsErrorTypes
@@ -16,14 +17,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NewsViewModel(application: Application) : AndroidViewModel(application) {
-    var favoritesRepository = FavoritesRepository(application)
-    var newsList : MutableLiveData<List<NewsModel>> = MutableLiveData()
-    var highlightsList : MutableLiveData<List<NewsModel>> = MutableLiveData()
-    val favoritesList: LiveData<List<NewsModel>> = favoritesRepository.getFavoritesList()
-    val errors:  MutableLiveData<MutableList<NewsErrorTypes>> = MutableLiveData(ArrayList())
+class NewsViewModel(
+    private val favoritesRepository: FavoritesRepository,
+    private val apiHandler: APIHandler
+) : ViewModel() {
 
-    private val apiHandler = APIHandler.getInstance(application.applicationContext)
+    var newsList: MutableLiveData<List<NewsModel>> = MutableLiveData()
+    var highlightsList: MutableLiveData<List<NewsModel>> = MutableLiveData()
+    val favoritesList: LiveData<List<NewsModel>> = favoritesRepository.getFavoritesList()
+    val errors: MutableLiveData<MutableList<NewsErrorTypes>> = MutableLiveData(ArrayList())
 
     fun getNews() {
         apiHandler.getNews(object : Callback<NewsResponseModel> {
