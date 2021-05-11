@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.davi.mesanews.utils.retrofit.RetrofitDataSource
 import com.davi.mesanews.utils.MesaNewsConstants
+import com.davi.mesanews.utils.retrofit.NewsAPIInterface
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,9 +16,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 val networkModule = module {
     factory { provideOkHttpClient(androidContext()) }
     single { provideRetrofit(get()) }
-    single {
+    single<NewsAPIInterface> {
         RetrofitDataSource(get())
-    }
+    } bind NewsAPIInterface::class
 }
 
 fun provideRetrofit(client: OkHttpClient): Retrofit {

@@ -1,10 +1,12 @@
 package com.davi.mesanews.utils.room.dao
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import com.davi.mesanews.models.NewsModel
+import com.davi.mesanews.repository.FavoritesRepository
 import com.davi.mesanews.utils.room.FavoritesDatabase
 
-class FavoritesRepository (private val context: Context) {
+class DatabaseDataSource (private val context: Context): FavoritesRepository {
     private val favoritesDao: FavoritesDao
     
     init {
@@ -12,14 +14,14 @@ class FavoritesRepository (private val context: Context) {
         favoritesDao = database.favoritesDao()
     }
     
-    suspend fun insertFavorite(newsModel: NewsModel) {
+    override suspend fun insertFavorite(newsModel: NewsModel) {
         newsModel.isFavorite = true
         favoritesDao.insertFavorite(newsModel)
     }
 
-    suspend fun deleteFavorite(newsModel: NewsModel) {
+    override suspend fun deleteFavorite(newsModel: NewsModel) {
         favoritesDao.deleteFavorite(newsModel)
     }
-    
-    fun getFavoritesList() = favoritesDao.getFavorites()
+
+    override fun getFavoritesList(): LiveData<List<NewsModel>> = favoritesDao.getFavorites()
 }

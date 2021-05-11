@@ -3,16 +3,17 @@ package com.davi.mesanews.news
 import android.util.Log
 import androidx.lifecycle.*
 import com.davi.mesanews.models.NewsModel
-import com.davi.mesanews.utils.retrofit.RetrofitDataSource
+import com.davi.mesanews.repository.FavoritesRepository
 import com.davi.mesanews.utils.NewsErrorTypes
-import com.davi.mesanews.utils.room.dao.FavoritesRepository
+import com.davi.mesanews.utils.retrofit.NewsAPIInterface
+import com.davi.mesanews.utils.room.dao.DatabaseDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NewsViewModel(
     private val favoritesRepository: FavoritesRepository,
-    private val retrofitDataSource: RetrofitDataSource
+    private val newsAPIInterface: NewsAPIInterface
 ) : ViewModel() {
 
     private val _newsList = MutableLiveData<List<NewsModel>>()
@@ -29,15 +30,18 @@ class NewsViewModel(
     fun getNews() {
         viewModelScope.launch {
             try {
-                var news = retrofitDataSource.getNews().data
+                var news = newsAPIInterface.getNews().data
                 news = news.sortedBy { it.publishedAt }
                 news.map { newsModel ->
                     newsModel.isFavorite =
+                        favoritesList.value != null &&
                         favoritesList.value!!.any { it.url == newsModel.url }
                 }
                 _newsList.value = news
+                removeError(NewsErrorTypes.DateError)
             } catch (e: Exception) {
                 Log.d("Service error:", e.toString())
+                addError(NewsErrorTypes.DateError)
             }
         }
     }
@@ -45,10 +49,11 @@ class NewsViewModel(
     fun getHighlights() {
         viewModelScope.launch {
             try {
-                val news = retrofitDataSource.getHighlights()
+                val news = newsAPIInterface.getHighlights()
                 _highlights.value = news.data
             } catch (e: Exception) {
                 Log.d("Service error:", e.toString())
+                addError(NewsErrorTypes.HighlightsError)
             }
         }
     }
