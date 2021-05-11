@@ -1,10 +1,7 @@
 package com.davi.mesanews
 
 import android.app.Application
-import com.davi.mesanews.di.loginViewModelModule
-import com.davi.mesanews.di.networkModule
-import com.davi.mesanews.di.newsViewModelModule
-import com.davi.mesanews.di.prefsModule
+import com.davi.mesanews.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -20,7 +17,8 @@ class MesaNewsApplication : Application() {
                     newsViewModelModule,
                     networkModule,
                     prefsModule,
-                    loginViewModelModule
+                    loginViewModelModule,
+                    newsAdapterModule
                 )
             )
         }

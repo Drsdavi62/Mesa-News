@@ -1,37 +1,46 @@
 package com.davi.mesanews.news
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davi.mesanews.R
 import com.davi.mesanews.models.NewsModel
+import com.davi.mesanews.utils.MesaNewsConstants
 import com.davi.mesanews.utils.NewsErrorTypes
 import com.google.android.material.textview.MaterialTextView
 import com.jama.carouselview.CarouselView
 import com.jama.carouselview.enums.IndicatorAnimationType
 import com.jama.carouselview.enums.OffsetType
 import com.squareup.picasso.Picasso
-import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.getKoin
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import java.util.*
-import kotlin.collections.ArrayList
+import org.koin.core.qualifier.named
 
 class NewsFragment : Fragment(R.layout.news_fragment) {
 
     private val viewModel: NewsViewModel by viewModel()
 
+    private val scope = getKoin().createScope(
+        MesaNewsConstants.NEWS_SCOPE_ID,
+        named(MesaNewsConstants.NEWS_SCOPE_ID)
+    )
+    private val adapter: NewsAdapter by lazy { scope.get {
+        parametersOf(object : NewsAdapter.OnFavoriteClick {
+            override fun onFavoriteItemClick(news: NewsModel) {
+                viewModel.toggleFavorite(news)
+            }
+        })
+    }}
+
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: NewsAdapter
     private lateinit var carousel: CarouselView
     private lateinit var spinner: Spinner
     private lateinit var emptyView: LinearLayout
@@ -46,11 +55,16 @@ class NewsFragment : Fragment(R.layout.news_fragment) {
         setHasOptionsMenu(true)
     }
 
+    override fun onStop() {
+        super.onStop()
+        scope.close()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu, menu)
         val menuItem = menu.findItem(R.id.search_item)
         val searchView = menuItem.actionView as SearchView
-        searchView.queryHint =  getString(R.string.news_search_hint)
+        searchView.queryHint = getString(R.string.news_search_hint)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -59,11 +73,12 @@ class NewsFragment : Fragment(R.layout.news_fragment) {
             override fun onQueryTextChange(searchText: String?): Boolean {
                 if (searchText != null) {
                     val activeList = if (filter == ListFilter.Date) newsFullList else favoritesList
-                    val carouselVisibility = if (filter == ListFilter.Date) View.VISIBLE else View.GONE
+                    val carouselVisibility =
+                        if (filter == ListFilter.Date) View.VISIBLE else View.GONE
 
                     if (searchText.isNotEmpty()) {
                         carousel.visibility = View.GONE
-                        val tempList = activeList.filter { it.title.contains(searchText, true)}
+                        val tempList = activeList.filter { it.title.contains(searchText, true) }
                         adapter.submitList(tempList as MutableList<NewsModel>)
                     } else {
                         carousel.visibility = carouselVisibility
@@ -113,14 +128,6 @@ class NewsFragment : Fragment(R.layout.news_fragment) {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-
-        adapter = NewsAdapter(
-            AsyncDifferConfig.Builder(NewsModel.DIFF_UTIL).build(),
-            object : NewsAdapter.OnFavoriteClick {
-                override fun onFavoriteItemClick(news: NewsModel) {
-                    viewModel.toggleFavorite(news)
-                }
-            })
 
         recyclerView.adapter = adapter
 

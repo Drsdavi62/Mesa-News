@@ -10,7 +10,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface NewsAPIInterface {
-    @GET("/v1/client/news?current_page=2&per_page=&published_at=") //fun getNews(@Header("Authorization") authToken : String) : Call<NewsResponseModel>
+    @GET("/v1/client/news?current_page=2&per_page=&published_at=")
     suspend fun getNews() : NewsResponseModel
 
     @GET("/v1/client/news/highlights")

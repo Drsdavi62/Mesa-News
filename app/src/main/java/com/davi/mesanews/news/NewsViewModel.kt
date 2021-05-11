@@ -3,20 +3,17 @@ package com.davi.mesanews.news
 import android.util.Log
 import androidx.lifecycle.*
 import com.davi.mesanews.models.NewsModel
+import com.davi.mesanews.utils.retrofit.RetrofitDataSource
 import com.davi.mesanews.utils.NewsErrorTypes
-import com.davi.mesanews.utils.retrofit.NewsAPIInterface
 import com.davi.mesanews.utils.room.dao.FavoritesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 class NewsViewModel(
     private val favoritesRepository: FavoritesRepository,
-    private val retrofitClient: Retrofit
+    private val retrofitDataSource: RetrofitDataSource
 ) : ViewModel() {
-
-    private val endpoint = retrofitClient.create(NewsAPIInterface::class.java)
 
     private val _newsList = MutableLiveData<List<NewsModel>>()
     val newsList: LiveData<List<NewsModel>>
@@ -32,8 +29,13 @@ class NewsViewModel(
     fun getNews() {
         viewModelScope.launch {
             try {
-                val news = endpoint.getNews()
-                _newsList.value = news.data
+                var news = retrofitDataSource.getNews().data
+                news = news.sortedBy { it.publishedAt }
+                news.map { newsModel ->
+                    newsModel.isFavorite =
+                        favoritesList.value!!.any { it.url == newsModel.url }
+                }
+                _newsList.value = news
             } catch (e: Exception) {
                 Log.d("Service error:", e.toString())
             }
@@ -43,7 +45,7 @@ class NewsViewModel(
     fun getHighlights() {
         viewModelScope.launch {
             try {
-                val news = endpoint.getHighlights()
+                val news = retrofitDataSource.getHighlights()
                 _highlights.value = news.data
             } catch (e: Exception) {
                 Log.d("Service error:", e.toString())
