@@ -26,7 +26,7 @@ import org.koin.core.parameter.parametersOf
 import java.util.*
 import kotlin.collections.ArrayList
 
-class NewsFragment : Fragment() {
+class NewsFragment : Fragment(R.layout.news_fragment) {
 
     private val viewModel: NewsViewModel by viewModel()
 
@@ -41,13 +41,6 @@ class NewsFragment : Fragment() {
     private lateinit var newsFullList: List<NewsModel>
     private lateinit var favoritesList: List<NewsModel>
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.news_fragment, container, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -55,7 +48,7 @@ class NewsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu, menu)
-        val menuItem = menu!!.findItem(R.id.search_item)
+        val menuItem = menu.findItem(R.id.search_item)
         val searchView = menuItem.actionView as SearchView
         searchView.queryHint =  getString(R.string.news_search_hint)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -70,7 +63,7 @@ class NewsFragment : Fragment() {
 
                     if (searchText.isNotEmpty()) {
                         carousel.visibility = View.GONE
-                        val tempList = activeList.filter { it.title.contains(searchText!!, true)}
+                        val tempList = activeList.filter { it.title.contains(searchText, true)}
                         adapter.submitList(tempList as MutableList<NewsModel>)
                     } else {
                         carousel.visibility = carouselVisibility

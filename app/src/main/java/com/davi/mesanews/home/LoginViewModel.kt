@@ -1,49 +1,38 @@
 package com.davi.mesanews.home
 
-import android.app.Application
 import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import com.davi.mesanews.R
-import com.davi.mesanews.models.TokenModel
-import com.davi.mesanews.utils.retrofit.APIHandler
+import android.util.Log
+import androidx.lifecycle.*
+import com.davi.mesanews.models.LoginModel
 import com.davi.mesanews.utils.MesaNewsConstants
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.davi.mesanews.utils.retrofit.NewsAPIInterface
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 class LoginViewModel(
-    private val apiHandler: APIHandler,
-    private val prefs: SharedPreferences,
-    private val navController: NavController
+    retrofitClient: Retrofit,
+    prefs: SharedPreferences,
 ) : ViewModel() {
-    var isSuccesfull = MutableLiveData<Boolean>()
 
-    val editor = prefs.edit()
+    private val endpoint = retrofitClient.create(NewsAPIInterface::class.java)
+
+    private val _success = MutableLiveData<Boolean>()
+    val isSuccessful: LiveData<Boolean>
+        get() = _success
+
+    private val editor = prefs.edit()
 
     fun performLogin(email : String, password : String) {
-        apiHandler.performLogin(email, password, object : Callback<TokenModel> {
-            override fun onResponse(call: Call<TokenModel>, response: Response<TokenModel>) {
-                if (response.body() != null) {
-                    editor.putString(MesaNewsConstants.TOKEN_KEY, response.body()!!.token)
-                    editor.apply()
-                    isSuccesfull.postValue(true)
-                    navController.navigate(R.id.action_loginFragment_to_newsActivity)
-                } else {
-                    isSuccesfull.postValue(false)
-                }
-
-            }
-
-            override fun onFailure(call: Call<TokenModel>, t: Throwable) {
-                editor.remove(MesaNewsConstants.TOKEN_KEY)
+        viewModelScope.launch {
+            try {
+                val token = endpoint.performLogin(LoginModel(email, password)).token
+                editor.putString(MesaNewsConstants.TOKEN_KEY, token)
                 editor.apply()
-                isSuccesfull.postValue(false)
+                _success.value = true
+            } catch (e: Exception) {
+                Log.d("Service Error", e.toString())
+                _success.value = false
             }
-
-        })
+        }
     }
 }

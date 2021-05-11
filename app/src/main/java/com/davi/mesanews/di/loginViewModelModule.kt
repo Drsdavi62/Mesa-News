@@ -1,16 +1,14 @@
 package com.davi.mesanews.di
 
-import androidx.navigation.NavController
 import com.davi.mesanews.home.LoginViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val loginViewModelModule = module {
-    viewModel { (navController: NavController) ->
+    viewModel {
         LoginViewModel(
-            apiHandler = get(),
+            retrofitClient = get(),
             prefs = get(),
-            navController
         )
     }
 }

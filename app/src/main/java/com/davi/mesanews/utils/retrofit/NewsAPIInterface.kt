@@ -11,11 +11,11 @@ import retrofit2.http.POST
 
 interface NewsAPIInterface {
     @GET("/v1/client/news?current_page=2&per_page=&published_at=") //fun getNews(@Header("Authorization") authToken : String) : Call<NewsResponseModel>
-    fun getNews() : Call<NewsResponseModel>
+    suspend fun getNews() : NewsResponseModel
 
     @GET("/v1/client/news/highlights")
-    fun getHighlights() : Call<NewsResponseModel>
+    suspend fun getHighlights() : NewsResponseModel
 
     @POST("v1/client/auth/signin")
-    fun performLogin(@Body loginModel : LoginModel) : Call<TokenModel>
+    suspend fun performLogin(@Body loginModel : LoginModel) : TokenModel
 }

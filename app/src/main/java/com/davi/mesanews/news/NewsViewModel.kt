@@ -1,78 +1,54 @@
 package com.davi.mesanews.news
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.util.Log
+import androidx.lifecycle.*
 import com.davi.mesanews.models.NewsModel
-import com.davi.mesanews.models.NewsResponseModel
 import com.davi.mesanews.utils.NewsErrorTypes
-import com.davi.mesanews.utils.retrofit.APIHandler
+import com.davi.mesanews.utils.retrofit.NewsAPIInterface
 import com.davi.mesanews.utils.room.dao.FavoritesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import retrofit2.Retrofit
 
 class NewsViewModel(
     private val favoritesRepository: FavoritesRepository,
-    private val apiHandler: APIHandler
+    private val retrofitClient: Retrofit
 ) : ViewModel() {
 
-    var newsList: MutableLiveData<List<NewsModel>> = MutableLiveData()
-    var highlightsList: MutableLiveData<List<NewsModel>> = MutableLiveData()
+    private val endpoint = retrofitClient.create(NewsAPIInterface::class.java)
+
+    private val _newsList = MutableLiveData<List<NewsModel>>()
+    val newsList: LiveData<List<NewsModel>>
+        get() = _newsList
+
+    private val _highlights = MutableLiveData<List<NewsModel>>()
+    val highlightsList: LiveData<List<NewsModel>>
+        get() = _highlights
+
     val favoritesList: LiveData<List<NewsModel>> = favoritesRepository.getFavoritesList()
     val errors: MutableLiveData<MutableList<NewsErrorTypes>> = MutableLiveData(ArrayList())
 
     fun getNews() {
-        apiHandler.getNews(object : Callback<NewsResponseModel> {
-            override fun onFailure(call: Call<NewsResponseModel>, t: Throwable) {
-                addError(NewsErrorTypes.DateError)
+        viewModelScope.launch {
+            try {
+                val news = endpoint.getNews()
+                _newsList.value = news.data
+            } catch (e: Exception) {
+                Log.d("Service error:", e.toString())
             }
-
-            override fun onResponse(
-                call: Call<NewsResponseModel>,
-                response: Response<NewsResponseModel>
-            ) {
-                if (response.body() == null || response.code() >= 400) {
-                    addError(NewsErrorTypes.DateError)
-                    return
-                }
-                removeError(NewsErrorTypes.DateError)
-                var news = response.body()!!.data
-                news = news.sortedBy { it.publishedAt }
-                news.map { newsModel ->
-                    newsModel.isFavorite =
-                        favoritesList.value!!.any { it.url == newsModel.url }
-                }
-                newsList.postValue(news)
-            }
-        })
+        }
     }
 
     fun getHighlights() {
-        apiHandler.getHighlights(object : Callback<NewsResponseModel> {
-            override fun onFailure(call: Call<NewsResponseModel>, t: Throwable) {
-                addError(NewsErrorTypes.HighlightsError)
+        viewModelScope.launch {
+            try {
+                val news = endpoint.getHighlights()
+                _highlights.value = news.data
+            } catch (e: Exception) {
+                Log.d("Service error:", e.toString())
             }
-
-            override fun onResponse(
-                call: Call<NewsResponseModel>,
-                response: Response<NewsResponseModel>
-            ) {
-                if (response.body() == null || response.code() >= 400) {
-                    addError(NewsErrorTypes.HighlightsError)
-                    return
-                }
-                removeError(NewsErrorTypes.HighlightsError)
-                var news = response.body()!!.data
-                news = news.sortedBy { it.publishedAt }
-                highlightsList.postValue(news)
-            }
-        })
+        }
     }
 
     fun toggleFavorite(newsModel: NewsModel) {
