@@ -17,7 +17,7 @@ val networkModule = module {
     factory { provideOkHttpClient(androidContext()) }
     single { provideRetrofit(get()) }
     single<NewsAPIInterface> {
-        RetrofitDataSource(get())
+        RetrofitDataSource()
     } bind NewsAPIInterface::class
 }
 

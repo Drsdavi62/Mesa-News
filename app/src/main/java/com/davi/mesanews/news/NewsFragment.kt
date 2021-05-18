@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.widget.*
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -26,19 +27,25 @@ import org.koin.core.qualifier.named
 
 class NewsFragment : Fragment(R.layout.news_fragment) {
 
-    private val viewModel: NewsViewModel by viewModel()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val viewModel: NewsViewModel by viewModel()
 
     private val scope = getKoin().createScope(
         MesaNewsConstants.NEWS_SCOPE_ID,
         named(MesaNewsConstants.NEWS_SCOPE_ID)
     )
-    private val adapter: NewsAdapter by lazy { scope.get {
-        parametersOf(object : NewsAdapter.OnFavoriteClick {
-            override fun onFavoriteItemClick(news: NewsModel) {
-                viewModel.toggleFavorite(news)
-            }
-        })
-    }}
+    private val adapter: NewsAdapter by lazy {
+        scope.get {
+            parametersOf(object : NewsAdapter.OnFavoriteClick {
+                override fun onFavoriteItemClick(news: NewsModel) {
+                    viewModel.toggleFavorite(news)
+                    if (news.isFavorite) {
+
+                    }
+                }
+            })
+        }
+    }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var carousel: CarouselView

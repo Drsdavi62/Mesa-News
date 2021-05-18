@@ -5,19 +5,17 @@ import com.davi.mesanews.models.NewsResponseModel
 import com.davi.mesanews.models.TokenModel
 import retrofit2.Retrofit
 
-class RetrofitDataSource(retrofit: Retrofit): NewsAPIInterface {
-
-    private val endpoint = retrofit.create(NewsAPIInterface::class.java)
+class RetrofitDataSource(): NewsAPIInterface {
 
     override suspend fun getNews(): NewsResponseModel {
-        return endpoint.getNews()
+        return APIService.service.getNews()
     }
 
     override suspend fun getHighlights(): NewsResponseModel {
-        return endpoint.getHighlights()
+        return APIService.service.getHighlights()
     }
 
     override suspend fun performLogin(loginModel: LoginModel): TokenModel {
-        return endpoint.performLogin(loginModel)
+        return APIService.service.performLogin(loginModel)
     }
 }

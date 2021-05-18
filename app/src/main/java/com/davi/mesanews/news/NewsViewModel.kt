@@ -1,12 +1,14 @@
 package com.davi.mesanews.news
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.davi.mesanews.models.NewsModel
 import com.davi.mesanews.repository.FavoritesRepository
 import com.davi.mesanews.utils.NewsErrorTypes
 import com.davi.mesanews.utils.retrofit.NewsAPIInterface
-import com.davi.mesanews.utils.room.dao.DatabaseDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +37,7 @@ class NewsViewModel(
                 news.map { newsModel ->
                     newsModel.isFavorite =
                         favoritesList.value != null &&
-                        favoritesList.value!!.any { it.url == newsModel.url }
+                                favoritesList.value!!.any { it.url == newsModel.url }
                 }
                 _newsList.value = news
                 removeError(NewsErrorTypes.DateError)
