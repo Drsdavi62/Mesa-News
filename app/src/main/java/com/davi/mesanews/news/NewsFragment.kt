@@ -20,6 +20,7 @@ import com.jama.carouselview.CarouselView
 import com.jama.carouselview.enums.IndicatorAnimationType
 import com.jama.carouselview.enums.OffsetType
 import com.squareup.picasso.Picasso
+import org.jetbrains.annotations.TestOnly
 import org.koin.android.ext.android.getKoin
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -27,8 +28,7 @@ import org.koin.core.qualifier.named
 
 class NewsFragment : Fragment(R.layout.news_fragment) {
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val viewModel: NewsViewModel by viewModel()
+    private val viewModel: NewsViewModel by viewModel()
 
     private val scope = getKoin().createScope(
         MesaNewsConstants.NEWS_SCOPE_ID,
@@ -214,7 +214,6 @@ class NewsFragment : Fragment(R.layout.news_fragment) {
             spinner.setSelection(0)
             filter = ListFilter.Date
             viewModel.getNews()
-            carousel.visibility = View.VISIBLE
         } else {
             spinner.setSelection(1)
             filter = ListFilter.Favorite
